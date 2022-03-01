@@ -1,0 +1,112 @@
+#!/bin/sh
+
+# script for managing certificates braindead easily using OpenSSL
+
+# days for which a cert is active
+# used for every single certificate
+CA_DAYS="1825"
+# strength, at least 2048 bits is recommended
+CA_BITS="4096"
+CA_ROOT="${HOME}/.config/certauth"
+CA_FILE="root"
+# put `nopass` and the like in here
+CA_CLIENT_ARGS="nopass"
+# certificate data
+# country
+CA_C="JP"
+# state
+CA_ST="Kanto"
+# city
+CA_L="Night City"
+# organization
+CA_O="Sense/Net"
+# unit
+CA_OU="Cybersecurity team"
+
+
+init() {
+    ##################
+    # Initializes CA #
+    ##################
+
+    echo "Creating ${CA_ROOT}"
+    mkdir -p "$CA_ROOT"
+    local key="${CA_ROOT}/${CA_FILE}.key"
+    echo "Generating root certificate..."
+    openssl genrsa -des3 -out "$key" "$CA_BITS"
+    local pem="${CA_ROOT}/${CA_FILE}.pem"
+    openssl req -x509 -new -nodes -key "$key" -sha256 -days "$CA_DAYS" -out "$pem"
+    echo "Successfully initialized local CA"
+    echo "Install your public key (${pem}) on clients to accept certificates signed by this CA"
+}
+
+clean() {
+    #######################
+    # Deletes the CA root #
+    #######################
+
+    echo "! WARNING: DO YOU REALLY WANT TO DELETE ${CA_ROOT}"
+    echo "! THIS CANNOT BE UNDONE"
+    read -p "Are you sure? (yes/no): " choice
+    if [ "$choice" = "yes" ] || [ "$choice" = "YES" ] ; then
+        rm -rf "$CA_ROOT"
+    fi
+}
+
+inited() {
+    [ ! -d "$CA_ROOT" ] && echo "${CA_ROOT} doesn't exist" && echo "Run \`${0} init\`" && exit 1
+}
+
+mkcert() {
+    #######################################################
+    # Creates a new certificate for a client and signs it #
+    #######################################################
+
+    inited
+
+    local clientdir="${CA_ROOT}/${1}"
+    if [ ! -d "$clientdir" ] ; then
+        mkdir -p "$clientdir"
+        echo "Creating ${clientdir}"
+        local client_file="${clientdir}/${1}"
+        local key="${client_file}.key"
+        echo "Generating client certificate..."
+        openssl genrsa -out "$key" "$CA_BITS"
+        echo "Creating certificate signing request..."
+        local csr="${client_file}.csr"
+        openssl req -new -key "$key" \
+            -subj "/C=${CA_C}/ST=${CA_ST}/L=${CA_L}/O=${CA_O}/ON=${CA_ON}" \
+            -out "$csr"
+        echo "Signing certificate..."
+        local pem="${client_file}.pem"
+        openssl x509 -req -in "$csr" \
+            -CA "${CA_ROOT}/root.pem" \
+            -CAkey "${CA_ROOT}/root.key" -CAcreateserial -out "$pem" \
+            -days "$CA_DAYS" -sha256
+    else
+        echo "${clientdir} already exists!"
+    fi
+}
+
+dh() {
+    inited
+
+    openssl dhparam -out "${CA_ROOT}/dh${CA_BITS}.pem" "$CA_BITS"
+}
+
+if [ $# -ne 0 ] ; then
+    case "$1" in
+        "init" )
+            init ;;
+        "clean" )
+            clean ;;
+        "create" )
+            if [ $# -eq 2 ] ; then
+                mkcert "$2"
+            fi ;;
+        "dh" )
+            dh ;;
+        * )
+            echo "${1}: invalid argument" ;;
+    esac
+fi
