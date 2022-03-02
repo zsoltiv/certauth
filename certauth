@@ -78,10 +78,10 @@ mkcert() {
             -subj "/C=${CA_C}/ST=${CA_ST}/L=${CA_L}/O=${CA_O}/ON=${CA_ON}" \
             -out "$csr"
         echo "Signing certificate..."
-        local pem="${client_file}.pem"
+        local cert="${client_file}.crt"
         openssl x509 -req -in "$csr" \
             -CA "${CA_ROOT}/root.pem" \
-            -CAkey "${CA_ROOT}/root.key" -CAcreateserial -out "$pem" \
+            -CAkey "${CA_ROOT}/root.key" -CAcreateserial -out "$cert" \
             -days "$CA_DAYS" -sha256
     else
         echo "${clientdir} already exists!"
