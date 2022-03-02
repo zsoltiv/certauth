@@ -34,8 +34,8 @@ init() {
     local key="${CA_ROOT}/${CA_FILE}.key"
     echo "Generating root certificate..."
     openssl genrsa -des3 -out "$key" "$CA_BITS"
-    local pem="${CA_ROOT}/${CA_FILE}.pem"
-    openssl req -x509 -new -nodes -key "$key" -sha256 -days "$CA_DAYS" -out "$pem"
+    local cert="${CA_ROOT}/${CA_FILE}.crt"
+    openssl req -x509 -new -nodes -key "$key" -sha256 -days "$CA_DAYS" -out "$cert"
     echo "Successfully initialized local CA"
     echo "Install your public key (${pem}) on clients to accept certificates signed by this CA"
 }
