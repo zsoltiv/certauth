@@ -49,9 +49,9 @@ clean() {
     # Deletes the CA root #
     #######################
 
-    echo "! WARNING: DO YOU REALLY WANT TO DELETE ${CA_ROOT}"
+    echo "! WARNING: DO YOU REALLY WANT TO DELETE ${CA_ROOT}?"
     echo "! THIS CANNOT BE UNDONE"
-    read -p "Are you sure? (yes/no): " choice
+    read -p "[yes/no]: " choice
     if [ "$choice" = "yes" ] || [ "$choice" = "YES" ] ; then
         rm -rf "$CA_ROOT"
     fi
