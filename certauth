@@ -1,14 +1,22 @@
 #!/bin/sh
 
+
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# 
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+
 # script for managing certificates braindead easily using OpenSSL
 
-# days for which a cert is active
-# used for every single certificate
-CA_DAYS="1825"
-# strength, at least 2048 bits is recommended
-CA_BITS="4096"
+
 CA_ROOT="${HOME}/.config/certauth"
 CA_FILE="root"
+# how long a cert is active
+CA_DAYS="1984"
+# strength, at least 2048 bits is recommended
+CA_BITS="4096"
 # put `nopass` and the like in here
 CA_CLIENT_ARGS="nopass"
 # certificate data
