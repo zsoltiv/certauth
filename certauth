@@ -13,22 +13,18 @@ CA_FILE="root"
 CA_CLIENT_ARGS="nopass"
 # certificate data
 # country
-CA_C="JP"
+CA_C="HU"
 # state
-CA_ST="Kanto"
+CA_ST="Budapest"
 # city
-CA_L="Night City"
+CA_L="Budapest"
 # organization
-CA_O="Sense/Net"
+CA_O="My Org"
 # unit
-CA_OU="Cybersecurity team"
+CA_OU="My Team"
 
 
 init() {
-    ##################
-    # Initializes CA #
-    ##################
-
     echo "Creating ${CA_ROOT}"
     mkdir -p "$CA_ROOT"
     local key="${CA_ROOT}/${CA_FILE}.key"
@@ -109,4 +105,10 @@ if [ $# -ne 0 ] ; then
         * )
             echo "${1}: invalid argument" ;;
     esac
+else
+    echo "Parameters:
+init          - Initialize certauth in ${CA_ROOT}
+clean         - wipe ${CA_ROOT}
+create [name] - create a signed keypair in ${CA_ROOT}/name
+dh            - create DH parameter file"
 fi

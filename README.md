@@ -8,11 +8,4 @@ Usage:
 
 Edit the `CA_*` options in the script to change things such as the name.
 
-Initialize a CA:
-```certauth init```
-
-Create a certificate and a private key signed by your CA:
-```certauth create <name>```
-
-Wipe your CA:
-```certauth clean```
+For a list of options, run `certauth` without any additional arguments.
